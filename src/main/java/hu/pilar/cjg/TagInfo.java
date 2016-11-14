@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -88,11 +87,6 @@ class TagInfo {
         return this;
     }
 
-    TagInfo withAttribute(String name) {
-        attrs.put(name, null);
-        return this;
-    }
-
     TagInfo withChild(TagInfo child) {
         if (child != null) {
             if (child.tag != null) {
@@ -103,30 +97,6 @@ class TagInfo {
             }
         }
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        return 97 * hash + Objects.hashCode(this.cl);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final TagInfo other = (TagInfo) obj;
-        if (!Objects.equals(this.cl, other.cl)) {
-            return false;
-        }
-        return true;
     }
 
 }
