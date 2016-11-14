@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -76,6 +77,11 @@ public class HintGeneratorTest {
             return "";
         }
 
+        @XmlElement(name = "D")
+        public TestA getEnum() {
+            return null;
+        }
+
     }
 
     /**
@@ -88,12 +94,15 @@ public class HintGeneratorTest {
 
         XmlHint hint = hg.getHintsFor(TestClass.class);
         assertNotNull(hint);
+        System.out.println(hint.toJson());
         assertEquals("var tags = {"
                 + "\"!top\":[\"C\"],"
                 + "\"!attrs\":{},"
                 + "\"A\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
                 + "\"B\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
-                + "\"C\":{\"attrs\":{\"value3\":null},\"children\":[\"A\",\"B\"]}};",
+                + "\"C\":{\"attrs\":{\"value3\":null},\"children\":[\"A\",\"B\",\"D\"]},"
+                + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
+                + "};",
                 hint.toJson());
 
         hg = new HintGenerator(new ObjectMapper(), new IAttributeValueFactory() {
@@ -112,7 +121,9 @@ public class HintGeneratorTest {
                 + "\"!attrs\":{},"
                 + "\"A\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
                 + "\"B\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
-                + "\"C\":{\"attrs\":{\"value3\":[\"1979\",\"1981\",\"1980\"]},\"children\":[\"A\",\"B\"]}};",
+                + "\"C\":{\"attrs\":{\"value3\":[\"1979\",\"1981\",\"1980\"]},\"children\":[\"A\",\"B\",\"D\"]},"
+                + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
+                + "};",
                 hint.toJson());
 
     }

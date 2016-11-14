@@ -18,11 +18,11 @@ package hu.pilar.cjg;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -40,7 +40,7 @@ class TagInfo {
     /**
      * All possible atribute values
      */
-    private final Map<String, Set<String>> attrs = new HashMap<>();
+    private final Map<String, Set<String>> attrs = new TreeMap<>();
     /**
      * What tags can be beneath this tag
      */

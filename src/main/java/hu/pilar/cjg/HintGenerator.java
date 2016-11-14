@@ -51,7 +51,8 @@ public class HintGenerator {
      */
     private static class HintGeneratorContext {
 
-        private Map<Class, TagInfo> tags = new HashMap<>();
+        private Map<Class, TagInfo> byClass = new HashMap<>();
+        private Map<String, TagInfo> byTag = new HashMap<>();
     }
 
     public HintGenerator(ObjectMapper mapper) {
@@ -87,7 +88,7 @@ public class HintGenerator {
             return null;
         }
         XmlHint hint = new XmlHint(mapper, t);
-        for (TagInfo ti : ctx.tags.values()) {
+        for (TagInfo ti : ctx.byTag.values()) {
             if (ti.getTag() != null) {
                 hint.addTag(ti);
             }
@@ -96,11 +97,12 @@ public class HintGenerator {
     }
 
     private TagInfo getTagInfo(Class c, HintGeneratorContext ctx) {
-        if (ctx.tags.containsKey(c)) {
-            return ctx.tags.get(c);
+        if (ctx.byClass.containsKey(c)) {
+            return ctx.byClass.get(c);
         }
         TagInfo t = new TagInfo(c, getTagName(c));
-        ctx.tags.put(c, t);
+        ctx.byClass.put(c, t);
+        ctx.byTag.put(t.getTag(), t);
         addAttributes(t, c);
         addOverrides(t, c, ctx);
         addChildren(t, c, ctx);
@@ -144,8 +146,11 @@ public class HintGenerator {
                 t.withChild(ti);
             } else if (m.isAnnotationPresent(XmlElement.class)) {
                 XmlElement ref = m.getAnnotation(XmlElement.class);
-                TagInfo temp = getTagInfo(c, ctx);
-                t.withChild(new TagInfo(findReturnType(m), ref.name(), temp));
+                Class rt = findReturnType(m);
+                TagInfo temp = getTagInfo(rt, ctx);
+                temp = new TagInfo(findReturnType(m), ref.name(), temp);
+                t.withChild(temp);
+                ctx.byTag.put(temp.getTag(), temp);
             }
         }
         return t;
