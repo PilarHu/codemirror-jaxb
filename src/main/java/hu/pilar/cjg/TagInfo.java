@@ -30,11 +30,6 @@ import java.util.TreeSet;
  */
 class TagInfo {
 
-    /**
-     * The XML tag name
-     */
-    private final Class cl;
-
     private final String tag;
     /**
      * All possible atribute values
@@ -49,13 +44,11 @@ class TagInfo {
      */
     private final Set<String> overrides = new HashSet<>();
 
-    TagInfo(Class cl, String tag) {
-        this.cl = cl;
+    TagInfo(String tag) {
         this.tag = tag;
     }
 
-    TagInfo(Class cl, String tag, TagInfo clone) {
-        this.cl = cl;
+    TagInfo(String tag, TagInfo clone) {
         this.tag = tag;
         this.children.addAll(clone.children);
         this.attrs.putAll(clone.attrs);

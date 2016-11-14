@@ -100,7 +100,7 @@ public class HintGenerator {
         if (ctx.byClass.containsKey(c)) {
             return ctx.byClass.get(c);
         }
-        TagInfo t = new TagInfo(c, getTagName(c));
+        TagInfo t = new TagInfo(getTagName(c));
         ctx.byClass.put(c, t);
         ctx.byTag.put(t.getTag(), t);
         addAttributes(t, c);
@@ -148,7 +148,7 @@ public class HintGenerator {
                 XmlElement ref = m.getAnnotation(XmlElement.class);
                 Class rt = findReturnType(m);
                 TagInfo temp = getTagInfo(rt, ctx);
-                temp = new TagInfo(findReturnType(m), ref.name(), temp);
+                temp = new TagInfo(ref.name(), temp);
                 t.withChild(temp);
                 ctx.byTag.put(temp.getTag(), temp);
             }
