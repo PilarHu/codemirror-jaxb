@@ -205,7 +205,7 @@ public class HintGenerator {
         Set<Class<?>> set = subclassFinder.findClassesThatExtend(c);
         set.stream().map(HintGenerator::getTagName).
                 filter(x -> x != null).
-                forEach(tag -> t.getOverrides().add(tag));
+                forEach(t.getOverrides()::add);
         set.stream().forEach(x -> getTagInfo(x, ctx));
     }
 

@@ -108,8 +108,7 @@ class TagInfo {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.cl);
-        return hash;
+        return 97 * hash + Objects.hashCode(this.cl);
     }
 
     @Override
