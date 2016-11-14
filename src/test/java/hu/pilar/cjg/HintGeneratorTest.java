@@ -18,6 +18,7 @@ package hu.pilar.cjg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  *
@@ -92,6 +94,15 @@ public class HintGeneratorTest {
             return null;
         }
 
+    }
+
+    @Test
+    public void testNonJaxb() {
+        HintGenerator hg = new HintGenerator(new ObjectMapper());
+
+        XmlHint hint = hg.getHintsFor(Object.class);
+        assertNull(hint);
+        hg = new HintGenerator(new ObjectMapper(), (Class parent) -> Collections.emptySet());        
     }
 
     /**
