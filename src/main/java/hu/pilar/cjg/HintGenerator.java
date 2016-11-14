@@ -180,7 +180,7 @@ public class HintGenerator {
 
     private Set<String> findValues(Method m, String name) {
         Class<?> type = findReturnType(m);
-        if (Boolean.class.equals(type)) {
+        if (Boolean.class.equals(type) || boolean.class.equals(type)) {
             return Sets.newHashSet("true", "false");
         }
         if (Enum.class.isAssignableFrom(type)) {

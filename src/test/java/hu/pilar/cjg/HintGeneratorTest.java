@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Test;
 
 /**
  *
@@ -60,8 +60,8 @@ public class HintGeneratorTest {
     public static class TestA extends TestAbstract {
     }
 
-    @XmlRootElement(name = "B")
-    public static class TestB extends TestAbstract {
+    @XmlRootElement(name = "b")
+    public static class B extends TestAbstract {
     }
 
     @XmlRootElement(name = "C")
@@ -70,6 +70,16 @@ public class HintGeneratorTest {
         @XmlElementRef
         public List<TestAbstract> getList() {
             return null;
+        }
+
+        @XmlAttribute
+        public Boolean getBoole() {
+            return true;
+        }
+
+        @XmlAttribute
+        public boolean getBoole2() {
+            return true;
         }
 
         @XmlAttribute
@@ -99,9 +109,9 @@ public class HintGeneratorTest {
                 + "\"!top\":[\"C\"],"
                 + "\"!attrs\":{},"
                 + "\"A\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
-                + "\"B\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
-                + "\"C\":{\"attrs\":{\"value3\":null},\"children\":[\"A\",\"B\",\"D\"]},"
-                + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
+                + "\"C\":{\"attrs\":{\"boole\":[\"true\",\"false\"],\"boole2\":[\"true\",\"false\"],\"value3\":null},\"children\":[\"A\",\"D\",\"b\"]},"
+                + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
+                + "\"b\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
                 + "};",
                 hint.toJson());
 
@@ -120,9 +130,9 @@ public class HintGeneratorTest {
                 + "\"!top\":[\"C\"],"
                 + "\"!attrs\":{},"
                 + "\"A\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
-                + "\"B\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
-                + "\"C\":{\"attrs\":{\"value3\":[\"1979\",\"1981\",\"1980\"]},\"children\":[\"A\",\"B\",\"D\"]},"
-                + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
+                + "\"C\":{\"attrs\":{\"boole\":[\"true\",\"false\"],\"boole2\":[\"true\",\"false\"],\"value3\":[\"1979\",\"1981\",\"1980\"]},\"children\":[\"A\",\"D\",\"b\"]},"
+                + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
+                + "\"b\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
                 + "};",
                 hint.toJson());
 
