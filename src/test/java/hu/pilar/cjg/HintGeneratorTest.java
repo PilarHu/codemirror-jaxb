@@ -78,7 +78,7 @@ public class HintGeneratorTest {
         }
 
         @XmlAttribute
-        public boolean getBoole2() {
+        public boolean isBoole2() {
             return true;
         }
 
