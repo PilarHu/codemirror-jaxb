@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A collected set of data about a given top level XML element
  *
  * @author {cserepj@pilar.hu}
  */
@@ -74,6 +75,12 @@ public class XmlHint {
         return new TreeMap<>(any);
     }
 
+    /**
+     * Generates the json string from the collected information
+     *
+     *
+     * @return
+     */
     public String toJson() {
         try {
             return "var tags = " + mapper.writeValueAsString(this) + ";";
