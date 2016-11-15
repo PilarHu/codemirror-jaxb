@@ -6,7 +6,7 @@
 
     <groupId>hu.pilar</groupId>
     <artifactId>codemirror-jaxb</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>codemirror-jaxb</name>

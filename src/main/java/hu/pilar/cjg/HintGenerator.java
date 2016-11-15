@@ -184,7 +184,7 @@ public class HintGenerator {
             return Sets.newHashSet("true", "false");
         }
         if (Enum.class.isAssignableFrom(type)) {
-            Class<? extends Enum> c = (Class<? extends Enum>) m.getReturnType();
+            Class<? extends Enum> c = (Class<? extends Enum>) type;
             EnumSet<? extends Enum> set = EnumSet.allOf(c);
             return set.stream().
                     map(x -> x.name()).
