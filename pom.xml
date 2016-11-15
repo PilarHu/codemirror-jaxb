@@ -6,7 +6,7 @@
 
     <groupId>hu.pilar</groupId>
     <artifactId>codemirror-jaxb</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>codemirror-jaxb</name>
@@ -39,7 +39,21 @@
         <url>${project.url}</url>
         <tag>codemirror-jaxb-0.1</tag>
     </scm>
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://www.pilar.hu/jenkins</url>
+    </ciManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>pilar</id>
+            <url>https://www.pilar.hu/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>pilar-snapshots</id>
+            <url>https://www.pilar.hu/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>
