@@ -33,6 +33,7 @@ XmlHint hint = hg.getHintsFor(AnyJaxbAnnotatedClass.class); // the JAXB root obj
 System.out.println(hint.toJson());
 ~~~~
 ## Providing custom attribute values 
+By default the library will generate attribute values for @XmlAttribute annotated getter methods with Boolean, boolean and enum return types. It is possible to generate more attribute value sets by implementing IAttributeValueFactory and providing the sets for each method:
 ~~~~
 HintGenerator hg = new HintGenerator(new ObjectMapper(),  new IAttributeValueFactory() {
             @Override
