@@ -3,12 +3,20 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn -B clean package'
+		   withMaven(
+                         maven: 'maven3',
+                         mavenLocalRepo: '.repository') {
+	                 sh 'mvn -B -DskipTests=true clean install'
+                    } 
             }
         }
         stage('Test') {
             steps {
-                sh 'mvn test verify'
+		   withMaven(
+                         maven: 'maven3',
+                         mavenLocalRepo: '.repository') {
+                         sh 'mvn test verify'
+	            }
             }
             post {
                 always {
@@ -18,7 +26,11 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-                sh 'mvn deploy'
+		   withMaven(
+                         maven: 'maven3',
+                         mavenLocalRepo: '.repository') {
+	                 sh 'mvn deploy'
+		}
             }
         }
     }
