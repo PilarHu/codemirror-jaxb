@@ -3,20 +3,14 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-		   withMaven(
-                         maven: 'maven3',
-                         mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0',
-                         mavenLocalRepo: '.repository') {
+		   withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0') {
 	                 sh 'mvn -B -DskipTests=true clean install'
                     } 
             }
         }
         stage('Test') {
             steps {
-		   withMaven(
-                         maven: 'maven3',
-                         mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0',
-                         mavenLocalRepo: '.repository') {
+		   withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0') {
                          sh 'mvn test verify'
 	            }
             }
@@ -28,10 +22,7 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-		   withMaven(
-                         maven: 'maven3',
-                         mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0',
-                         mavenLocalRepo: '.repository') {
+		   withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0') {
 	                 sh 'mvn deploy'
 		}
             }
