@@ -5,6 +5,7 @@ pipeline {
             steps {
 		   withMaven(
                          maven: 'maven3',
+                         mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0',
                          mavenLocalRepo: '.repository') {
 	                 sh 'mvn -B -DskipTests=true clean install'
                     } 
@@ -14,6 +15,7 @@ pipeline {
             steps {
 		   withMaven(
                          maven: 'maven3',
+                         mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0',
                          mavenLocalRepo: '.repository') {
                          sh 'mvn test verify'
 	            }
@@ -28,6 +30,7 @@ pipeline {
             steps {
 		   withMaven(
                          maven: 'maven3',
+                         mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0',
                          mavenLocalRepo: '.repository') {
 	                 sh 'mvn deploy'
 		}

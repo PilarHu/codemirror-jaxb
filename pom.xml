@@ -42,11 +42,11 @@
     <distributionManagement>
         <repository>
             <id>pilar</id>
-            <url>https://www.pilar.hu/nexus/content/repositories/releases</url>
+            <url>https://internal.pilar.hu/nexus/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>pilar-snapshots</id>
-            <url>https://www.pilar.hu/nexus/content/repositories/snapshots/</url>
+            <url>https://internal.pilar.hu/nexus/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     <build>
