@@ -1,7 +1,7 @@
 package hu.pilar.cjg;
 
-import com.google.common.collect.Lists;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class ReflectionBasedSubclassFinder implements ISubclassFinder {
 
     ReflectionBasedSubclassFinder() {
         LOGGER.info("Setting up reflection cache");
-        Collection< URL> urls = Lists.newArrayList();
+        Collection<URL> urls = new ArrayList<>();
         urls.addAll(ClasspathHelper.forJavaClassPath());
         urls.addAll(ClasspathHelper.forClassLoader());
         reflections = new Reflections(new ConfigurationBuilder().

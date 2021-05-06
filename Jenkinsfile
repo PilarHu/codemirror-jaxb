@@ -1,30 +1,34 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+       stage('Compile and test') {
             steps {
 		   withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK14') {
-	                 sh 'mvn -B -DskipTests=true clean install'
-                    } 
+	                 sh 'mvn -U -B clean verify install'
+                    }
             }
-        }
-        stage('Test') {
-            steps {
-		   withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK14') {
-                         sh 'mvn test verify'
-	            }
-            }
-            post {
+	    post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    jiraSendBuildInfo site: 'pilarhu.atlassian.net'
                 }
             }
         }
-        stage('Deliver') {
+        stage('Sonar') {
+            when { branch 'master' }
             steps {
+                withSonarQubeEnv('Pilar Sonar') {
 		   withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK14') {
-	                 sh 'mvn deploy'
-		}
+	                 sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+        stage('Nexus deploy') {
+            when { branch 'master' }
+            steps {
+    	        withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK14') {
+	                 sh 'mvn war:war deploy:deploy'
+                }
             }
         }
     }

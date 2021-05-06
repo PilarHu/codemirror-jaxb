@@ -17,19 +17,19 @@
 package hu.pilar.cjg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import java.util.LinkedHashSet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -102,7 +102,7 @@ public class HintGeneratorTest {
 
         XmlHint hint = hg.getHintsFor(Object.class);
         assertNull(hint);
-        hg = new HintGenerator(new ObjectMapper(), (Class parent) -> Collections.emptySet());        
+        hg = new HintGenerator(new ObjectMapper(), (Class parent) -> Collections.emptySet());
     }
 
     /**
@@ -130,7 +130,11 @@ public class HintGeneratorTest {
             @Override
             public Set<String> getValuesFor(String attributeName, Class type) {
                 if ("value3".equals(attributeName)) {
-                    return Sets.newHashSet("1979", "1980", "1981");
+                    Set<String> s = new LinkedHashSet<String>();
+                    s.add("1979");
+                    s.add("1980");
+                    s.add("1981");
+                    return s;
                 }
                 return null;
             }
@@ -141,7 +145,7 @@ public class HintGeneratorTest {
                 + "\"!top\":[\"C\"],"
                 + "\"!attrs\":{},"
                 + "\"A\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
-                + "\"C\":{\"attrs\":{\"boole\":[\"true\",\"false\"],\"boole2\":[\"true\",\"false\"],\"value3\":[\"1979\",\"1981\",\"1980\"]},\"children\":[\"A\",\"D\",\"b\"]},"
+                + "\"C\":{\"attrs\":{\"boole\":[\"true\",\"false\"],\"boole2\":[\"true\",\"false\"],\"value3\":[\"1979\",\"1980\",\"1981\"]},\"children\":[\"A\",\"D\",\"b\"]},"
                 + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
                 + "\"b\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
                 + "};",

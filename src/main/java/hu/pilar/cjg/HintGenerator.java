@@ -1,7 +1,6 @@
 package hu.pilar.cjg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -11,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * This class generates xml code completion hints from a set of JAXB annotated
@@ -181,7 +180,7 @@ public class HintGenerator {
     private Set<String> findValues(Method m, String name) {
         Class<?> type = findReturnType(m);
         if (Boolean.class.equals(type) || boolean.class.equals(type)) {
-            return Sets.newHashSet("true", "false");
+            return Set.of("true", "false");
         }
         if (Enum.class.isAssignableFrom(type)) {
             Class<? extends Enum> c = (Class<? extends Enum>) type;
