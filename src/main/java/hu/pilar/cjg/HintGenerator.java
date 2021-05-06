@@ -14,6 +14,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import java.util.LinkedHashSet;
 
 /**
  * This class generates xml code completion hints from a set of JAXB annotated
@@ -44,6 +45,13 @@ public class HintGenerator {
      * data set into this class and reuse the information.
      */
     private final ISubclassFinder subclassFinder;
+
+    private static final Set<String> BOOLEAN_VALUES = new LinkedHashSet<String>();
+
+    static {
+        BOOLEAN_VALUES.add("true");
+        BOOLEAN_VALUES.add("false");
+    }
 
     /**
      * inner class to keep record of classes that were already processed.
@@ -180,7 +188,7 @@ public class HintGenerator {
     private Set<String> findValues(Method m, String name) {
         Class<?> type = findReturnType(m);
         if (Boolean.class.equals(type) || boolean.class.equals(type)) {
-            return Set.of("true", "false");
+            return BOOLEAN_VALUES;
         }
         if (Enum.class.isAssignableFrom(type)) {
             Class<? extends Enum> c = (Class<? extends Enum>) type;
