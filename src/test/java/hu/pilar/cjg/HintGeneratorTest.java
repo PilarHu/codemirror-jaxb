@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  */
 public class HintGeneratorTest {
 
-    public static enum TestEnum {
+    public enum TestEnum {
         ONE, TWO, THREE
     }
 
@@ -102,7 +102,7 @@ public class HintGeneratorTest {
 
         XmlHint hint = hg.getHintsFor(Object.class);
         assertNull(hint);
-        hg = new HintGenerator(new ObjectMapper(), (Class parent) -> Collections.emptySet());
+        new HintGenerator(new ObjectMapper(), (Class parent) -> Collections.emptySet());
     }
 
     /**
@@ -126,18 +126,15 @@ public class HintGeneratorTest {
                 + "};",
                 hint.toJson());
 
-        hg = new HintGenerator(new ObjectMapper(), new IAttributeValueFactory() {
-            @Override
-            public Set<String> getValuesFor(String attributeName, Class type) {
-                if ("value3".equals(attributeName)) {
-                    Set<String> s = new LinkedHashSet<String>();
-                    s.add("1979");
-                    s.add("1980");
-                    s.add("1981");
-                    return s;
-                }
-                return null;
+        hg = new HintGenerator(new ObjectMapper(), (attributeName, type) -> {
+            if ("value3".equals(attributeName)) {
+                Set<String> s = new LinkedHashSet<>();
+                s.add("1979");
+                s.add("1980");
+                s.add("1981");
+                return s;
             }
+            return null;
         });
         hint = hg.getHintsFor(TestClass.class);
         assertNotNull(hint);

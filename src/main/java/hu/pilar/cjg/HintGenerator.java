@@ -4,17 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.LinkedHashSet;
 
 /**
  * This class generates xml code completion hints from a set of JAXB annotated
@@ -46,7 +41,7 @@ public class HintGenerator {
      */
     private final ISubclassFinder subclassFinder;
 
-    private static final Set<String> BOOLEAN_VALUES = new LinkedHashSet<String>();
+    private static final Set<String> BOOLEAN_VALUES = new LinkedHashSet<>();
 
     static {
         BOOLEAN_VALUES.add("true");
@@ -58,8 +53,8 @@ public class HintGenerator {
      */
     private static class HintGeneratorContext {
 
-        private Map<Class, TagInfo> byClass = new HashMap<>();
-        private Map<String, TagInfo> byTag = new HashMap<>();
+        private final Map<Class, TagInfo> byClass = new HashMap<>();
+        private final Map<String, TagInfo> byTag = new HashMap<>();
     }
 
     public HintGenerator(ObjectMapper mapper) {
@@ -82,12 +77,6 @@ public class HintGenerator {
         this.subclassFinder = subclassFinder;
     }
 
-    /**
-     * The public API
-     *
-     * @param c
-     * @return
-     */
     public XmlHint getHintsFor(Class c) {
         HintGeneratorContext ctx = new HintGeneratorContext();
         TagInfo t = getTagInfo(c, ctx);
@@ -194,7 +183,7 @@ public class HintGenerator {
             Class<? extends Enum> c = (Class<? extends Enum>) type;
             EnumSet<? extends Enum> set = EnumSet.allOf(c);
             return set.stream().
-                    map(x -> x.name()).
+                    map(Enum::name).
                     collect(Collectors.toSet());
         }
 
@@ -216,9 +205,9 @@ public class HintGenerator {
     private void addOverrides(TagInfo t, Class c, HintGeneratorContext ctx) {
         Set<Class<?>> set = subclassFinder.findClassesThatExtend(c);
         set.stream().map(HintGenerator::getTagName).
-                filter(x -> x != null).
+                filter(Objects::nonNull).
                 forEach(t.getOverrides()::add);
-        set.stream().forEach(x -> getTagInfo(x, ctx));
+        set.forEach(x -> getTagInfo(x, ctx));
     }
 
 }

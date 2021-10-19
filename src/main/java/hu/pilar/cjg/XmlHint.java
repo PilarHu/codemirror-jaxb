@@ -29,19 +29,14 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A collected set of data about a given top level XML element
- *
- * @author {cserepj@pilar.hu}
- */
 public class XmlHint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlHint.class);
-    private List<String> topElements = new ArrayList<>();
+    private final List<String> topElements = new ArrayList<>();
     private final Map<String, Set<String>> attrs = new HashMap<>();
-    private Map<String, TagInfo> any = new HashMap<>();
+    private final Map<String, TagInfo> any = new HashMap<>();
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     XmlHint(ObjectMapper mapper, TagInfo tag) {
         addTag(tag, true);
@@ -75,12 +70,6 @@ public class XmlHint {
         return new TreeMap<>(any);
     }
 
-    /**
-     * Generates the json string from the collected information
-     *
-     *
-     * @return
-     */
     public String toJson() {
         try {
             return "var tags = " + mapper.writeValueAsString(this) + ";";
