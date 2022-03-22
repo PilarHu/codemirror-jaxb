@@ -1,22 +1,21 @@
 package hu.pilar.cjg;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
+import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author cserepj
- */
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static org.reflections.util.ClasspathHelper.forClassLoader;
+import static org.reflections.util.ClasspathHelper.forJavaClassPath;
+
 public class ReflectionBasedSubclassFinder implements ISubclassFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionBasedSubclassFinder.class);
@@ -24,14 +23,15 @@ public class ReflectionBasedSubclassFinder implements ISubclassFinder {
 
     ReflectionBasedSubclassFinder() {
         LOGGER.info("Setting up reflection cache");
-        Collection<URL> urls = new ArrayList<>();
-        urls.addAll(ClasspathHelper.forJavaClassPath());
-        urls.addAll(ClasspathHelper.forClassLoader());
+        final var urls = new ArrayList<URL>();
+        urls.addAll(forJavaClassPath());
+        urls.addAll(forClassLoader());
         reflections = new Reflections(new ConfigurationBuilder().
-                setUrls(urls.stream().filter(x -> x != null).collect(Collectors.toList())).
-                filterInputsBy(new FilterBuilder.Include(
-                        FilterBuilder.prefix("")))
-                .setScanners(new SubTypesScanner()));
+            setUrls(urls.stream().filter(Objects::nonNull)
+                .collect(toList())).
+            filterInputsBy(new FilterBuilder()
+                .includePattern(".*"))
+            .setScanners(Scanners.SubTypes));
     }
 
     public ReflectionBasedSubclassFinder(Reflections reflections) {

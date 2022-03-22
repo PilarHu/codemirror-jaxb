@@ -26,15 +26,15 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import java.util.LinkedHashSet;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
 import org.junit.jupiter.api.Test;
 
-/**
- *
- * @author cserepj
- */
 public class HintGeneratorTest {
 
     public enum TestEnum {
@@ -116,15 +116,14 @@ public class HintGeneratorTest {
         XmlHint hint = hg.getHintsFor(TestClass.class);
         assertNotNull(hint);
         System.out.println(hint.toJson());
-        assertEquals("var tags = {"
+        assertThat(hint.toJson(), equalTo("var tags = {"
                 + "\"!top\":[\"C\"],"
                 + "\"!attrs\":{},"
                 + "\"A\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
                 + "\"C\":{\"attrs\":{\"boole\":[\"true\",\"false\"],\"boole2\":[\"true\",\"false\"],\"value3\":null},\"children\":[\"A\",\"D\",\"b\"]},"
                 + "\"D\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]},"
                 + "\"b\":{\"attrs\":{\"nextValue\":[\"ONE\",\"TWO\",\"THREE\"],\"value\":[\"ONE\",\"TWO\",\"THREE\"]},\"children\":[]}"
-                + "};",
-                hint.toJson());
+                + "};"));
 
         hg = new HintGenerator(new ObjectMapper(), (attributeName, type) -> {
             if ("value3".equals(attributeName)) {
