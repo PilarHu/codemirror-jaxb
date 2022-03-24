@@ -7,13 +7,11 @@ import java.util.Set;
  *
  * @author cserepj
  */
+@FunctionalInterface
 public interface ISubclassFinder {
 
     /**
      * Returns all the subclasses that extend the parameter parent class.
-     *
-     * @param parent
-     * @return
      */
-    Set<Class<?>> findClassesThatExtend(Class parent);
+    <T> Set<Class<? extends T>> findClassesThatExtend(Class<T> parent);
 }

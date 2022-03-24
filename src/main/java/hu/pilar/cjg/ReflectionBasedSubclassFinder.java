@@ -18,11 +18,11 @@ import static org.reflections.util.ClasspathHelper.forJavaClassPath;
 
 public class ReflectionBasedSubclassFinder implements ISubclassFinder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionBasedSubclassFinder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReflectionBasedSubclassFinder.class);
     private final Reflections reflections;
 
     ReflectionBasedSubclassFinder() {
-        LOGGER.info("Setting up reflection cache");
+        LOG.info("Setting up reflection cache");
         final var urls = new ArrayList<URL>();
         urls.addAll(forJavaClassPath());
         urls.addAll(forClassLoader());
@@ -39,7 +39,8 @@ public class ReflectionBasedSubclassFinder implements ISubclassFinder {
     }
 
     @Override
-    public Set<Class<?>> findClassesThatExtend(Class parent) {
+    public <T> Set<Class<? extends T>> findClassesThatExtend(Class<T> parent) {
+        LOG.debug("Looking up subtypes for {}", parent.getSimpleName());
         return reflections.getSubTypesOf(parent);
     }
 

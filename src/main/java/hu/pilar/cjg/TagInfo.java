@@ -18,11 +18,10 @@ package hu.pilar.cjg;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  *
@@ -30,6 +29,7 @@ import java.util.TreeSet;
  */
 class TagInfo {
 
+    private final static Logger LOG = LoggerFactory.getLogger(TagInfo.class);
     private final String tag;
     /**
      * All possible atribute values
@@ -75,21 +75,42 @@ class TagInfo {
         return children;
     }
 
-    TagInfo withAttribute(String name, Set<String> possibleValues) {
+    void withAttribute(String name, Set<String> possibleValues) {
+        LOG.debug("      Adding attribute {} to {}", name, this.tag);
         attrs.put(name, possibleValues);
-        return this;
     }
 
-    TagInfo withChild(TagInfo child) {
+    void withChild(TagInfo child) {
         if (child != null) {
             if (child.tag != null) {
+                LOG.debug("      Adding tag {} to {}", child.tag, this.tag);
                 children.add(child.tag);
             }
             if (!child.overrides.isEmpty()) {
                 children.addAll(child.overrides);
             }
         }
-        return this;
     }
 
+    @Override
+    public String toString() {
+        return "TagInfo{" +
+            "tag='" + tag + '\'' +
+            ", attrs=" + attrs +
+            ", children=" + children +
+            ", overrides=" + overrides +
+            '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof final TagInfo tagInfo)) return false;
+        return tag.equals(tagInfo.tag);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tag);
+    }
 }
