@@ -108,35 +108,29 @@ public class HintGenerator {
 
     public Optional<XmlHint> getHintsFor(Class<?> c) {
         HintGeneratorContext ctx = new HintGeneratorContext();
-        return getTagInfo(c, ctx).map(t -> {
-            if (t.getTag() == null) return null;
-            XmlHint hint = new XmlHint(mapper, t);
-            for (TagInfo ti : ctx.byTag.values()) {
-                if (ti.getTag() != null) {
-                    hint.addTag(ti);
-                }
+        var t = getTagInfo(c, ctx);
+        if (t.getTag() == null) return empty();
+        XmlHint hint = new XmlHint(mapper, t);
+        for (TagInfo ti : ctx.byTag.values()) {
+            if (ti.getTag() != null) {
+                hint.addTag(ti);
             }
-            return hint;
-        });
+        }
+        return of(hint);
     }
 
-    private Optional<TagInfo> getTagInfo(final Type type, final HintGeneratorContext ctx) {
-        if (type instanceof Class<?> c) {
-            if (ctx.byClass.containsKey(c)) {
-                var ret = of(ctx.byClass.get(c));
-                LOG.debug("Class {} has cached TagInfo {}", c.getSimpleName(), ret);
-                return ret;
-            }
-            TagInfo t = getTagName(c).map(TagInfo::new).orElse(new TagInfo(null));
-            ctx.byClass.put(c, t);
-            ctx.byTag.put(t.getTag(), t);
-            addAttributes(t, c);
-            addOverrides(t, c, ctx);
-            addChildren(t, c, ctx);
-            LOG.debug("Class {} has TagInfo {}", c.getSimpleName(), t);
-            return of(t);
+    private TagInfo getTagInfo(final Type type, final HintGeneratorContext ctx) {
+        var c = (Class<?>) (type);
+        if (ctx.byClass.containsKey(c)) {
+            return ctx.byClass.get(c);
         }
-        return empty();
+        TagInfo t = getTagName(c).map(TagInfo::new).orElse(new TagInfo(null));
+        ctx.byClass.put(c, t);
+        ctx.byTag.put(t.getTag(), t);
+        addAttributes(t, c);
+        addOverrides(t, c, ctx);
+        addChildren(t, c, ctx);
+        return t;
     }
 
     private void addAttributes(final TagInfo t, final Class<?> c) {
@@ -165,12 +159,12 @@ public class HintGenerator {
             for (Method m : c.getMethods()) {
                 if (m.isAnnotationPresent(XmlElementRef.class)) {
                     findReturnType(m)
-                        .flatMap(ch -> getTagInfo(ch, ctx))
+                        .map(ch -> getTagInfo(ch, ctx))
                         .ifPresent(t::withChild);
                 } else if (m.isAnnotationPresent(XmlElement.class)) {
                     XmlElement ref = m.getAnnotation(XmlElement.class);
                     findReturnType(m)
-                        .flatMap(rt -> getTagInfo(rt, ctx))
+                        .map(rt -> getTagInfo(rt, ctx))
                         .ifPresent(rtti -> {
                             final var clone = new TagInfo(ref.name(), rtti);
                             t.withChild(clone);
