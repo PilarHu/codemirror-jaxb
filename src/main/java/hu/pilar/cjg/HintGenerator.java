@@ -154,23 +154,22 @@ public class HintGenerator {
     }
 
     private void addChildren(final TagInfo t, final Type type, final HintGeneratorContext ctx) {
-        if (type instanceof Class<?> c) {
-            LOG.debug("Adding child nodes for class {} for tag {}", c.getSimpleName(), t.getTag());
-            for (Method m : c.getMethods()) {
-                if (m.isAnnotationPresent(XmlElementRef.class)) {
-                    findReturnType(m)
-                        .map(ch -> getTagInfo(ch, ctx))
-                        .ifPresent(t::withChild);
-                } else if (m.isAnnotationPresent(XmlElement.class)) {
-                    XmlElement ref = m.getAnnotation(XmlElement.class);
-                    findReturnType(m)
-                        .map(rt -> getTagInfo(rt, ctx))
-                        .ifPresent(rtti -> {
-                            final var clone = new TagInfo(ref.name(), rtti);
-                            t.withChild(clone);
-                            ctx.byTag.put(clone.getTag(), clone);
-                        });
-                }
+        var c = (Class<?>) type;
+        LOG.debug("Adding child nodes for class {} for tag {}", c.getSimpleName(), t.getTag());
+        for (Method m : c.getMethods()) {
+            if (m.isAnnotationPresent(XmlElementRef.class)) {
+                findReturnType(m)
+                    .map(ch -> getTagInfo(ch, ctx))
+                    .ifPresent(t::withChild);
+            } else if (m.isAnnotationPresent(XmlElement.class)) {
+                XmlElement ref = m.getAnnotation(XmlElement.class);
+                findReturnType(m)
+                    .map(rt -> getTagInfo(rt, ctx))
+                    .ifPresent(rtti -> {
+                        final var clone = new TagInfo(ref.name(), rtti);
+                        t.withChild(clone);
+                        ctx.byTag.put(clone.getTag(), clone);
+                    });
             }
         }
     }
