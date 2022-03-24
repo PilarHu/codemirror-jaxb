@@ -87,20 +87,23 @@ public class HintGenerator {
         return of(tagName);
     }
 
-    private static Class<?> findReturnType(Method m) {
-        Class<?> r = m.getReturnType();
+    private static Optional<Type> findReturnType(Method m) {
+        var returnType = m.getReturnType();
+        if (!Collection.class.isAssignableFrom(returnType)) {
+            return of(returnType);
+        }
         Type c = m.getGenericReturnType();
-        if (c instanceof ParameterizedType pt && Collection.class.isAssignableFrom(r)) {
-            LOG.debug("Return type is parameterized {} for method {}", pt.getActualTypeArguments(), m.getName());
+        if (c instanceof ParameterizedType pt) {
             for (Type tv : pt.getActualTypeArguments()) {
                 if (tv instanceof ParameterizedType tvpt) {
-                    return (Class<?>) tvpt.getRawType();
+                    return of(tvpt.getRawType());
                 } else {
-                    return (Class<?>) tv;
+                    return of(tv);
                 }
             }
         }
-        return r;
+        LOG.warn("Return type is collection but raw type is erased or not present for method: {}", m.getName());
+        return empty();
     }
 
     public Optional<XmlHint> getHintsFor(Class<?> c) {
@@ -117,20 +120,23 @@ public class HintGenerator {
         });
     }
 
-    private Optional<TagInfo> getTagInfo(final Class<?> c, final HintGeneratorContext ctx) {
-        if (ctx.byClass.containsKey(c)) {
-            var ret = of(ctx.byClass.get(c));
-            LOG.debug("Class {} has cached TagInfo {}", c.getSimpleName(), ret);
-            return ret;
+    private Optional<TagInfo> getTagInfo(final Type type, final HintGeneratorContext ctx) {
+        if (type instanceof Class<?> c) {
+            if (ctx.byClass.containsKey(c)) {
+                var ret = of(ctx.byClass.get(c));
+                LOG.debug("Class {} has cached TagInfo {}", c.getSimpleName(), ret);
+                return ret;
+            }
+            TagInfo t = getTagName(c).map(TagInfo::new).orElse(new TagInfo(null));
+            ctx.byClass.put(c, t);
+            ctx.byTag.put(t.getTag(), t);
+            addAttributes(t, c);
+            addOverrides(t, c, ctx);
+            addChildren(t, c, ctx);
+            LOG.debug("Class {} has TagInfo {}", c.getSimpleName(), t);
+            return of(t);
         }
-        TagInfo t = getTagName(c).map(TagInfo::new).orElse(new TagInfo(null));
-        ctx.byClass.put(c, t);
-        ctx.byTag.put(t.getTag(), t);
-        addAttributes(t, c);
-        addOverrides(t, c, ctx);
-        addChildren(t, c, ctx);
-        LOG.debug("Class {} has TagInfo {}", c.getSimpleName(), t);
-        return of(t);
+        return empty();
     }
 
     private void addAttributes(final TagInfo t, final Class<?> c) {
@@ -153,43 +159,48 @@ public class HintGenerator {
         }
     }
 
-    private void addChildren(final TagInfo t, final Class<?> c, final HintGeneratorContext ctx) {
-        LOG.debug("Adding child nodes for class {} for tag {}", c.getSimpleName(), t.getTag());
-        for (Method m : c.getMethods()) {
-            if (m.isAnnotationPresent(XmlElementRef.class)) {
-                Class<?> ch = findReturnType(m);
-                LOG.debug("    Found XmlElementRef annotation with return type {}", ch.getSimpleName());
-                getTagInfo(ch, ctx).ifPresent(t::withChild);
-            } else if (m.isAnnotationPresent(XmlElement.class)) {
-                XmlElement ref = m.getAnnotation(XmlElement.class);
-                final var rt = findReturnType(m);
-                LOG.debug("    Found XmlElement annotation with return type {}", rt.getSimpleName());
-                getTagInfo(rt, ctx).ifPresent(rtti -> {
-                    final var clone = new TagInfo(ref.name(), rtti);
-                    t.withChild(clone);
-                    ctx.byTag.put(clone.getTag(), clone);
-                });
+    private void addChildren(final TagInfo t, final Type type, final HintGeneratorContext ctx) {
+        if (type instanceof Class<?> c) {
+            LOG.debug("Adding child nodes for class {} for tag {}", c.getSimpleName(), t.getTag());
+            for (Method m : c.getMethods()) {
+                if (m.isAnnotationPresent(XmlElementRef.class)) {
+                    findReturnType(m)
+                        .flatMap(ch -> getTagInfo(ch, ctx))
+                        .ifPresent(t::withChild);
+                } else if (m.isAnnotationPresent(XmlElement.class)) {
+                    XmlElement ref = m.getAnnotation(XmlElement.class);
+                    findReturnType(m)
+                        .flatMap(rt -> getTagInfo(rt, ctx))
+                        .ifPresent(rtti -> {
+                            final var clone = new TagInfo(ref.name(), rtti);
+                            t.withChild(clone);
+                            ctx.byTag.put(clone.getTag(), clone);
+                        });
+                }
             }
         }
     }
 
     private Set<String> findValues(Method m, String name) {
-        Class<?> type = findReturnType(m);
-        if (Boolean.class.equals(type) || boolean.class.equals(type)) {
-            return BOOLEAN_VALUES;
-        }
-        if (Enum.class.isAssignableFrom(type)) {
-            final var c = (Class<? extends Enum>) type;
-            EnumSet<?> set = EnumSet.allOf(c);
-            return set.stream().
-                map(Enum::name).
-                collect(toSet());
-        }
-
-        if (this.valueSetFactory != null) {
-            return valueSetFactory.getValuesFor(name, type);
-        }
-        return null;
+        return findReturnType(m)
+            .filter(type -> type instanceof Class<?>)
+            .map(type -> {
+                Class<?> cl = (Class<?>) type;
+                if (Boolean.class.equals(cl) || boolean.class.equals(cl)) {
+                    return BOOLEAN_VALUES;
+                }
+                if (Enum.class.isAssignableFrom(cl)) {
+                    final var c = (Class<? extends Enum>) cl;
+                    EnumSet<?> set = EnumSet.allOf(c);
+                    return set.stream().
+                        map(Enum::name).
+                        collect(toSet());
+                }
+                if (this.valueSetFactory != null) {
+                    return valueSetFactory.getValuesFor(name, cl);
+                }
+                return new HashSet<String>();
+            }).orElse(Set.of());
     }
 
     private <T> void addOverrides(TagInfo t, Class<T> c, HintGeneratorContext ctx) {
