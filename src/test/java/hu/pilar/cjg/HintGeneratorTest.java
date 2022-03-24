@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +37,21 @@ class HintGeneratorTest {
         var hint = hg.getHintsFor(Object.class);
         assertFalse(hint.isPresent());
     }
+
+    @Test
+    void testConstructorWithSubClassFinder() {
+        HintGenerator hg = new HintGenerator(new ObjectMapper(), new ISubclassFinder() {
+            @Override
+            public <T> Set<Class<? extends T>> findClassesThatExtend(final Class<T> parent) {
+                return Set.of();
+            }
+        });
+        var hint = hg.getHintsFor(DefaultNameTestClass.class);
+        assertThat(hint.isPresent(), is(true));
+        assertThat(hint.get().toJson(), equalTo(
+            "var tags = {\"!top\":[\"defaultNameTestClass\"],\"!attrs\":{},\"defaultNameTestClass\":{\"attrs\":{},\"children\":[\"nestedParameterized\"]},\"nestedParameterized\":{\"attrs\":{},\"children\":[]}};"));
+    }
+
 
     @Test
     void test() {
@@ -131,6 +147,21 @@ class HintGeneratorTest {
         @XmlElement(name = "D")
         public TestA getEnum() {
             return null;
+        }
+
+    }
+
+    @XmlRootElement()
+    static class NestedParameterized<T> {
+
+    }
+
+    @XmlRootElement
+    static class DefaultNameTestClass {
+
+        @XmlElementRef()
+        public List<NestedParameterized<TestA>> getParameterizedList() {
+            return List.of();
         }
 
     }

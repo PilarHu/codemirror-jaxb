@@ -1,12 +1,12 @@
 /*
  *    Copyright (c) 2006-2014 PILAR Kft. All Rights Reserved.
- * 
+ *
  *   This software is the confidential and proprietary information of
  *   PILAR Kft. ("Confidential Information").
  *   You shall not disclose such Confidential Information and shall use it only in
  *   accordance with the terms of the license agreement you entered into
  *   with PILAR Kft.
- * 
+ *
  *   PILAR MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF
  *   THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
  *   TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -21,10 +21,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
- *
  * @author cserepj
  */
 class TagInfo {
@@ -80,15 +80,13 @@ class TagInfo {
         attrs.put(name, possibleValues);
     }
 
-    void withChild(TagInfo child) {
-        if (child != null) {
-            if (child.tag != null) {
-                LOG.debug("      Adding tag {} to {}", child.tag, this.tag);
-                children.add(child.tag);
-            }
-            if (!child.overrides.isEmpty()) {
-                children.addAll(child.overrides);
-            }
+    void withChild(@Nonnull TagInfo child) {
+        if (child.tag != null) {
+            LOG.debug("      Adding tag {} to {}", child.tag, this.tag);
+            children.add(child.tag);
+        }
+        if (!child.overrides.isEmpty()) {
+            children.addAll(child.overrides);
         }
     }
 
@@ -100,17 +98,5 @@ class TagInfo {
             ", children=" + children +
             ", overrides=" + overrides +
             '}';
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof final TagInfo tagInfo)) return false;
-        return tag.equals(tagInfo.tag);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(tag);
     }
 }
