@@ -164,6 +164,12 @@ class HintGeneratorTest {
             return List.of();
         }
 
+        @XmlElementRef()
+        public List getParameterizedListToTriggerWarning() {
+            return List.of();
+        }
+
+
     }
 
 }

@@ -15,7 +15,6 @@ public interface IAttributeValueFactory {
      *
      * @param attributeName the name of the attribute in the XML schema
      * @param type the java type returned by the getter method for the attribute
-     * @return
      */
-    Set<String> getValuesFor(String attributeName, Class type);
+    Set<String> getValuesFor(String attributeName, Class<?> type);
 }

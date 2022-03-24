@@ -183,7 +183,7 @@ public class HintGenerator {
 
     private Set<String> findValues(Method m, String name) {
         return findReturnType(m)
-            .filter(type -> type instanceof Class<?>)
+            .filter(Class.class::isInstance)
             .map(type -> {
                 Class<?> cl = (Class<?>) type;
                 if (Boolean.class.equals(cl) || boolean.class.equals(cl)) {
@@ -199,7 +199,7 @@ public class HintGenerator {
                 if (this.valueSetFactory != null) {
                     return valueSetFactory.getValuesFor(name, cl);
                 }
-                return new HashSet<String>();
+                return null;
             }).orElse(Set.of());
     }
 

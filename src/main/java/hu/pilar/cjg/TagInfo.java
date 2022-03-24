@@ -29,7 +29,7 @@ import java.util.*;
  */
 class TagInfo {
 
-    private final static Logger LOG = LoggerFactory.getLogger(TagInfo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TagInfo.class);
     private final String tag;
     /**
      * All possible atribute values
