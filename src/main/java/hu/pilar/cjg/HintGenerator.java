@@ -94,12 +94,11 @@ public class HintGenerator {
         }
         Type c = m.getGenericReturnType();
         if (c instanceof ParameterizedType pt) {
-            for (Type tv : pt.getActualTypeArguments()) {
-                if (tv instanceof ParameterizedType tvpt) {
-                    return of(tvpt.getRawType());
-                } else {
-                    return of(tv);
-                }
+            Type tv = pt.getActualTypeArguments()[0];
+            if (tv instanceof ParameterizedType tvpt) {
+                return of(tvpt.getRawType());
+            } else {
+                return of(tv);
             }
         }
         LOG.warn("Return type is collection but raw type is erased or not present for method: {}", m.getName());
