@@ -34,21 +34,15 @@
         <developerConnection>scm:git:git@github.com:PilarHu/codemirror-jaxb.git</developerConnection>
         <url>${project.url}</url>
     </scm>
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://www.pilar.hu/jenkins</url>
-    </ciManagement>
 
     <distributionManagement>
         <repository>
-            <id>pilar</id>
-            <url>https://internal.pilar.hu/nexus/repository/maven-releases/</url>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/PilarHu/public</url>
         </repository>
-        <snapshotRepository>
-            <id>pilar-snapshots</id>
-            <url>https://internal.pilar.hu/nexus/repository/maven-snapshots</url>
-        </snapshotRepository>
     </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
