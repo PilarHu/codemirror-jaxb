@@ -18,14 +18,12 @@ pipeline {
          }
         }
       }
-      stage('Compile, test, sonar') {
+      stage('Compile, test master') {
         when { branch 'master' }
         steps {
-          withSonarQubeEnv('Pilar Sonar') {
-	  	    withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK17') {
-	          sh 'mvn -B clean verify sonar:sonar install'
+       	    withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK17') {
+	          sh 'mvn -B clean verify install'
             }
-          }
         }
 	    post {
          always {
