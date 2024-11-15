@@ -13,6 +13,11 @@
     </description>
     <url>https://github.com/PilarHu/codemirror-jaxb</url>
 
+    <parent>
+        <groupId>hu.pilar</groupId>
+        <artifactId>pilar-bom</artifactId>
+        <version>2024.01-SNAPSHOT</version>
+    </parent>
     <developers>
         <developer>
             <id>pilarhu</id>
