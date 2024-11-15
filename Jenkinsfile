@@ -8,7 +8,7 @@ pipeline {
       stage('Compile and test') {
         when { not { branch 'master' } }
         steps {
-		  withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK17') {
+		  withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK23') {
 	        sh 'mvn -B clean verify'
           }
         }
@@ -21,7 +21,7 @@ pipeline {
       stage('Compile, test master') {
         when { branch 'master' }
         steps {
-       	    withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK17') {
+       	    withMaven(maven: 'maven3', mavenSettingsConfig: '00e92796-3fa4-4c0f-b4ee-fa441532f2f0', jdk: 'JDK23') {
 	          sh 'mvn -B clean verify install'
             }
         }
