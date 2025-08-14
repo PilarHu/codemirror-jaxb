@@ -18,6 +18,7 @@
         <artifactId>pilar-bom</artifactId>
         <version>2025.08.28</version>
     </parent>
+
     <developers>
         <developer>
             <id>pilarhu</id>
